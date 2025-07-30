@@ -461,7 +461,7 @@
         function openModal(doc) {
             modalTitle.textContent = doc.title;
             // const audioSrc = `http://127.0.0.1:5000/static/audio/${doc.slug}.mp3`; // Adapter pour GH Pages si besoin
-            const audioSrc = `../static/audio/${doc.slug}.mp3`;
+            const audioSrc = `./static/audio/${doc.slug}.mp3`;
             modalAudio.src = audioSrc;
             modalAudio.load();
             modalText.textContent = doc.content || "Texte non disponible.";
