@@ -1,0 +1,242 @@
+<!-- templates/listen.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ document.title }} - DocAudioShare</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Ajout d'un style spécifique pour cette page -->
+    <style>
+        .audio-controls {
+            margin: 20px 0;
+        }
+        .stats {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        /* Style pour les boutons de navigation */
+        .nav-button {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #007bff; /* Couleur primaire Bootstrap */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .nav-button:hover {
+            background-color: #0056b3; /* Couleur plus foncée au survol */
+        }
+        .nav-button.secondary {
+            background-color: #6c757d; /* Couleur secondaire */
+        }
+        .nav-button.secondary:hover {
+            background-color: #545b62;
+        }
+        /* Pour que le lecteur audio s'intègre mieux */
+        audio {
+             width: 100%;
+             margin-top: 10px;
+        }
+        /* Style pour le spinner utilisé dans l'overlay */
+        .spinner {
+            border: 4px solid #f3f3f3; /* Couleur de fond du cercle */
+            border-top: 4px solid #007bff; /* Couleur de l'animation */
+            border-radius: 50%;
+            width: 40px; /* Un peu plus grand pour l'overlay */
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto; /* Centrer le spinner */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* === Styles pour l'Overlay de Chargement === */
+        #loadingOverlay {
+            display: none; /* Caché par défaut */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Le z-index est géré par les enfants pour plus de flexibilité */
+        }
+        #loadingOverlay .overlay-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent noir */
+            z-index: 9998;
+        }
+        #loadingOverlay .overlay-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            text-align: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- === Overlay de Chargement (initialement caché) === -->
+    <div id="loadingOverlay">
+        <!-- Fond semi-transparent noir -->
+        <div class="overlay-backdrop"></div>
+        <!-- Contenu de l'overlay (centré) -->
+        <div class="overlay-content">
+            <div class="spinner"></div>
+            <p id="loadingMessage" style="margin-top: 10px; font-size: 1.2em;">Chargement...</p>
+        </div>
+    </div>
+    <!-- === Fin de l'Overlay de Chargement === -->
+
+    <div class="container">
+        <h1>{{ document.title }}</h1>
+        <!-- Statistiques -->
+        <div class="stats">
+            <p><strong>Identifiant :</strong> {{ document.slug }}</p>
+            <p><strong>Vues :</strong> <span id="viewCount">{{ document.view_count }}</span></p>
+            <p><strong>Lectures :</strong> <span id="playCount">{{ document.play_count }}</span></p>
+        </div>
+        <h2>🔊 Écouter</h2>
+        <!-- Le lecteur audio, visible par défaut, SANS autoplay -->
+        <div class="audio-controls">
+            <audio id="audioPlayer" controls>
+                <source src="{{ url_for('static', filename=document.audio_file_path) }}" type="audio/mpeg">
+                Votre navigateur ne supporte pas l'élément audio.
+            </audio>
+        </div>
+        <h2>📄 Texte Original</h2>
+        <div class="document-content">
+            <pre>{{ document.content }}</pre>
+        </div>
+
+        <!-- Boutons de navigation stylisés -->
+        <div style="margin-top: 20px;">
+            <a href="{{ url_for('show_interactions', slug=document.slug) }}" class="nav-button">📊 Voir les interactions</a>
+            <a href="{{ url_for('index') }}" class="nav-button secondary">🏠 Page d'accueil</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const playCountElement = document.getElementById('playCount');
+            const viewCountElement = document.getElementById('viewCount'); // Peut être utilisé si mis à jour dynamiquement
+            const slug = "{{ document.slug }}";
+            
+            // --- Éléments de l'overlay ---
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingMessage = document.getElementById('loadingMessage');
+
+            // --- Fonction pour afficher l'overlay ---
+            function showLoadingOverlay(message = "Chargement...") {
+                if (loadingOverlay && loadingMessage) {
+                    loadingMessage.textContent = message;
+                    loadingMessage.style.color = 'white'; // Réinitialiser la couleur
+                    loadingOverlay.style.display = 'block';
+                    // Optionnel : Empêcher le scroll
+                    // document.body.style.overflow = 'hidden';
+                }
+            }
+
+            // --- Fonction pour masquer l'overlay ---
+            function hideLoadingOverlay() {
+                if (loadingOverlay) {
+                    // Utiliser un petit délai pour que l'utilisateur voie le message final
+                    setTimeout(() => {
+                        loadingOverlay.style.display = 'none';
+                        // Optionnel : Réactiver le scroll
+                        // document.body.style.overflow = 'auto';
+                    }, 300); // 300ms de délai avant de masquer
+                }
+            }
+
+            // --- Gestion de la perte de connexion réseau ---
+            window.addEventListener('offline', function() {
+                showLoadingOverlay("Aucune connexion Internet. Tentative de reconnexion...");
+                if (loadingMessage) {
+                    loadingMessage.style.color = '#ffcc00'; // Jaune pour attirer l'attention
+                }
+            });
+
+            window.addEventListener('online', function() {
+                // Optionnel : ajouter un petit délai avant de masquer
+                // pour éviter un clignotement si la connexion est instable
+                setTimeout(hideLoadingOverlay, 500);
+            });
+
+            // --- Gestion du lecteur audio ---
+            if (audioPlayer) {
+                audioPlayer.addEventListener('play', function() {
+                    // Vérifier si c'est le *premier* play de cette session/page load
+                    if (this.dataset.playCounted !== 'true') {
+                        
+                        // 1. Afficher l'overlay de chargement
+                        showLoadingOverlay("Connexion...");
+                         
+                        // 2. Envoyer la requête au serveur
+                        fetch(`/play/${slug}`)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.success) {
+                                    // 3.a. Mise à jour du compteur local en cas de succès
+                                    let currentCount = parseInt(playCountElement.textContent) || 0;
+                                    playCountElement.textContent = currentCount + 1;
+                                    // Marquer comme compté
+                                    this.dataset.playCounted = 'true';
+                                } else {
+                                    // 3.b. Gestion d'une erreur renvoyée par le serveur
+                                    console.error("Erreur serveur:", data.error);
+                                    // Optionnel : Afficher un message dans l'overlay
+                                    if (loadingMessage) {
+                                        loadingMessage.textContent = "Erreur serveur.";
+                                    }
+                                    alert("Une erreur est survenue côté serveur.");
+                                }
+                            })
+                            .catch(error => {
+                                // 4. Gestion d'une erreur réseau
+                                console.error("Erreur lors de l'incrémentation du play count:", error);
+                                
+                                // Afficher un message d'erreur spécifique dans l'overlay
+                                if (loadingMessage) {
+                                    loadingMessage.textContent = "Erreur de connexion. Veuillez vérifier votre réseau.";
+                                    loadingMessage.style.color = '#ff6b6b'; // Rouge clair
+                                }
+                                
+                                // On peut choisir de ne PAS incrémenter localement ici.
+                                // Pour cet exemple, on l'incrémente quand même et on marque comme compté
+                                // pour éviter les tentatives répétées en cas d'erreur.
+                                let currentCount = parseInt(playCountElement.textContent) || 0;
+                                playCountElement.textContent = currentCount + 1;
+                                this.dataset.playCounted = 'true';
+                                
+                            })
+                            .finally(() => {
+                                // 5. Masquer l'overlay de chargement dans tous les cas (succès ou erreur)
+                                hideLoadingOverlay();
+                            });
+                     }
+                });
+            }
+
+        });
+    </script>
+</body>
+</html>

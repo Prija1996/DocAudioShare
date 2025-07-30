@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocAudioShare - Découvrez des Histoires Audio</title>
+    <meta name="description" content="Une collection d'histoires et de textes convertis en audio, partagées anonymement. Écoutez et découvrez du contenu intéressant.">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --background-color: #f8f9fa;
+            --card-bg-color: #ffffff;
+            --text-color: #333;
+            --border-color: #dee2e6;
+            --header-height: 80px;
+            --footer-height: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-top: var(--header-height);
+            padding-bottom: var(--footer-height);
+        }
+
+        /* --- Header --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background-color: var(--card-bg-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .logo h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .tagline {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            margin-top: 5px;
+        }
+
+        /* --- Hero/Bannière --- */
+        .hero {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 20px 40px;
+            margin-top: calc(var(--header-height) * -1); /* Compenser le padding-top du body */
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+			margin-top : 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* --- Contenu Principal --- */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        /* --- Liste des Documents (Cartes) --- */
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .doc-card {
+            background-color: var(--card-bg-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            margin: 0 0 15px 0;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .card-title:hover {
+            text-decoration: underline;
+        }
+
+        .card-excerpt {
+            flex-grow: 1;
+            font-size: 0.95rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Limite à 3 lignes */
+            -webkit-box-orient: vertical;
+        }
+
+        .card-meta {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 15px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* --- Section Contact --- */
+        .contact-section {
+            background-color: var(--card-bg-color);
+            padding: 50px 20px;
+            text-align: center;
+            margin-top: 40px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .contact-icons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .contact-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+            width: 80px;
+        }
+
+        .contact-icon:hover {
+            color: var(--primary-color);
+        }
+
+        .icon-svg {
+            width: 40px;
+            height: 40px;
+            fill: currentColor;
+            margin-bottom: 10px;
+        }
+
+        .contact-icon span {
+            font-size: 0.9rem;
+        }
+
+        .contact-email {
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+        .contact-email a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .contact-email a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Footer --- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: var(--footer-height);
+            background-color: var(--card-bg-color);
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        /* --- Modal Player --- */
+        #playerModal {
+            display: none;
+            position: fixed;
+            z-index: 1001; /* Au-dessus du header */
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+        #playerContent {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 25px;
+            border: none;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+        }
+        #modalAudio {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        #modalText {
+            max-height: 250px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+        }
+        #modalText pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.9rem;
+        }
+
+        /* --- Amélioration UX : Barre de recherche --- */
+        .search-container {
+             max-width: 500px;
+             margin: 20px auto;
+             position: relative;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 30px; /* Pill shape */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: box-shadow 0.3s ease;
+        }
+        #searchInput:focus {
+            outline: none;
+            box-shadow: 0 2px 10px rgba(13, 110, 253, 0.25);
+            border-color: var(--primary-color);
+        }
+        #clearSearch {
+             position: absolute;
+             right: 10px;
+             top: 50%;
+             transform: translateY(-50%);
+             background: none;
+             border: none;
+             color: var(--secondary-color);
+             cursor: pointer;
+             font-size: 1.2rem;
+             display: none; /* Caché par défaut */
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .docs-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+            .contact-icons { gap: 15px; }
+            .contact-icon { width: 70px; }
+            .icon-svg { width: 30px; height: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <h1>DocAudioShare</h1>
+            <div class="tagline">Histoires audio, partagées anonymement</div>
+        </div>
+    </header>
+
+    <div class="hero">
+        <h2>Bienvenue sur la Vitrine DocAudioShare</h2>
+        <p>Découvrez une sélection d'histoires et de textes convertis en audio. Profitez d'une expérience d'écoute simple et agréable.</p>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">🎧 Dernières Histoires Audio</h2>
+
+        <!-- Barre de recherche -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Rechercher par titre ou contenu...">
+            <button id="clearSearch" title="Effacer la recherche">&times;</button>
+        </div>
+
+        <div id="docsContainer">
+            <!-- Les cartes seront insérées ici par JavaScript -->
+            <div id="docsGrid" class="docs-grid">
+                <!-- Placeholder -->
+                <p style="text-align: center; grid-column: 1 / -1;">Chargement des histoires...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact-section">
+        <h2 class="section-title">📬 Contact</h2>
+        <p>Vous avez des questions, des suggestions ou souhaitez contribuer ?</p>
+        <p>Retrouvez-nous sur les réseaux ou envoyez un email :</p>
+
+        <div class="contact-icons">
+            <!-- Email -->
+            <a href="mailto:MON_EMAIL@exemple.com" class="contact-icon" target="_blank" rel="noopener noreferrer">
+                <!-- Icône SVG Email -->
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                <span>Email</span>
+            </a>
+            <!-- WhatsApp -->
+            <a href="https://wa.me/NUMERO_DE_TEL" class="contact-icon" target="_blank" rel="noopener noreferrer">
+                <!-- Icône SVG WhatsApp -->
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                <span>WhatsApp</span>
+            </a>
+            <!-- Facebook -->
+            <a href="https://www.facebook.com/NOM_DE_LA_PAGE_OU_PROFIL" class="contact-icon" target="_blank" rel="noopener noreferrer">
+                <!-- Icône SVG Facebook -->
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+                <span>Facebook</span>
+            </a>
+             <!-- Discord -->
+            <a href="https://discord.gg/CODE_INVITATION_OU_LIEN_DU_SERVEUR" class="contact-icon" target="_blank" rel="noopener noreferrer">
+                <!-- Icône SVG Discord -->
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.211.375-.445.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+                <span>Discord</span>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 DocAudioShare. Hébergé gratuitement avec ❤️.</p>
+    </footer>
+
+    <!-- Modal pour le lecteur -->
+    <div id="playerModal">
+        <div id="playerContent">
+            <div class="modal-header">
+                <h3 id="modalTitle" class="modal-title"></h3>
+                <button class="close">&times;</button>
+            </div>
+            <audio id="modalAudio" controls></audio>
+            <div id="modalText"><pre></pre></div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        // Remplacez par l'URL réelle de votre API JSON
+        const API_URL = 'http://127.0.0.1:5000/api/documents.json'; // Pour test local
+        // const API_URL = 'https://votre-nom-utilisateur.github.io/votre-depot/api/documents.json'; // Pour GitHub Pages
+
+        // --- ÉLÉMENTS DOM ---
+        const docsGrid = document.getElementById('docsGrid');
+        const modal = document.getElementById('playerModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalAudio = document.getElementById('modalAudio');
+        const modalText = document.getElementById('modalText').querySelector('pre');
+        const closeModalBtn = document.querySelector('.close');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+
+        // --- DONNÉES ---
+        let allDocuments = []; // Stocke tous les documents chargés
+
+        // --- FONCTIONS ---
+
+        // Fermer le modal
+        function closeModal() {
+            modal.style.display = "none";
+            modalAudio.pause();
+            modalAudio.src = '';
+        }
+
+        // Ouvrir le modal avec les données d'un document
+        function openModal(doc) {
+            modalTitle.textContent = doc.title;
+            const audioSrc = `http://127.0.0.1:5000/static/audio/${doc.slug}.mp3`; // Adapter pour GH Pages si besoin
+            // const audioSrc = `https://votre-nom-utilisateur.github.io/votre-depot/static/audio/${doc.slug}.mp3`;
+            modalAudio.src = audioSrc;
+            modalAudio.load();
+            modalText.textContent = doc.content || "Texte non disponible.";
+            modal.style.display = "block";
+            // Optionnel : tenter de jouer automatiquement (souvent bloqué)
+            // modalAudio.play().catch(e => console.log("Autoplay empêché:", e));
+        }
+
+        // Afficher les documents dans la grille
+        function displayDocuments(documentsToShow) {
+            docsGrid.innerHTML = ''; // Vider la grille
+
+            if (documentsToShow && documentsToShow.length > 0) {
+                documentsToShow.forEach(doc => {
+                    // Créer un extrait du contenu
+                    const excerpt = doc.content ? doc.content.substring(0, 100) + (doc.content.length > 100 ? '...' : '') : 'Aucun texte disponible.';
+
+                    const card = document.createElement('div');
+                    card.className = 'doc-card';
+                    card.innerHTML = `
+                        <div class="card-content">
+                            <h3 class="card-title" data-slug="${doc.slug}">${doc.title}</h3>
+                            <p class="card-excerpt">${excerpt}</p>
+                            <div class="card-meta">
+                                <div class="card-stats">
+                                    <div class="stat">
+                                        👁️ ${doc.view_count}
+                                    </div>
+                                    <div class="stat">
+                                        🔊 ${doc.play_count}
+                                    </div>
+                                </div>
+                                <div class="stat">📅 Récent</div> <!-- Placeholder pour la date -->
+                            </div>
+                        </div>
+                    `;
+                    docsGrid.appendChild(card);
+
+                    // Ajouter l'écouteur d'événement au titre de la carte
+                    card.querySelector('.card-title').addEventListener('click', () => openModal(doc));
+                });
+            } else {
+                const noDocsMsg = document.createElement('p');
+                noDocsMsg.style.textAlign = 'center';
+                noDocsMsg.style.gridColumn = '1 / -1'; // S'étend sur toute la largeur de la grille
+                noDocsMsg.textContent = 'Aucun document trouvé pour le moment.';
+                docsGrid.appendChild(noDocsMsg);
+            }
+        }
+
+        // Filtrer les documents en fonction du terme de recherche
+        function filterDocuments(searchTerm) {
+             if (!searchTerm) {
+                 displayDocuments(allDocuments);
+                 return;
+             }
+             const term = searchTerm.toLowerCase();
+             const filteredDocs = allDocuments.filter(doc =>
+                 doc.title.toLowerCase().includes(term) ||
+                 (doc.content && doc.content.toLowerCase().includes(term))
+             );
+             displayDocuments(filteredDocs);
+        }
+
+        // --- INITIALISATION ---
+
+        // Charger les données depuis l'API
+        fetch(API_URL)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Données chargées:", data);
+                allDocuments = data; // Stocker les données
+                displayDocuments(allDocuments); // Afficher tous les documents
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement des documents:', error);
+                docsGrid.innerHTML = '<p style="text-align: center; color: red; grid-column: 1 / -1;">Erreur lors du chargement des histoires. Veuillez réessayer plus tard.</p>';
+            });
+
+        // --- ÉVÉNEMENTS ---
+
+        // Fermer le modal en cliquant sur la croix ou en dehors
+        closeModalBtn.onclick = closeModal;
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Recherche
+        searchInput.addEventListener('input', () => {
+            const term = searchInput.value.trim();
+            if (term) {
+                clearSearchBtn.style.display = 'block';
+            } else {
+                clearSearchBtn.style.display = 'none';
+            }
+            filterDocuments(term);
+        });
+
+        // Effacer la recherche
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearchBtn.style.display = 'none';
+            displayDocuments(allDocuments); // Réafficher tous les documents
+            searchInput.focus();
+        });
+    </script>
+</body>
+</html>

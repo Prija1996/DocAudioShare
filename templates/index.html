@@ -1,0 +1,76 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocAudioShare - Partagez vos textes en audio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>DocAudioShare</h1>
+    <p>Partagez anonymement un texte qui sera lu à voix haute.</p>
+
+    <!-- Affichage des messages flash -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-messages">
+        {% for message in messages %}
+          <div class="flash-error">{{ message }}</div>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Formulaire de soumission -->
+    <h2>Soumettre un nouveau document</h2>
+    <form method="post" enctype="multipart/form-data"> <!-- Important: enctype pour les fichiers -->
+
+        <label for="title">Titre du document :</label><br>
+        <input type="text" id="title" name="title" size="50" placeholder="Mon super document"><br><br>
+
+        <label for="txt_file">Ou sélectionnez un fichier texte (.txt) :</label><br>
+        <input type="file" id="txt_file" name="txt_file" accept=".txt"><br><br>
+
+		<label for="content">Texte à lire (optionnel si un fichier est fourni) :</label><br>
+		<textarea id="content" name="content" rows="10" cols="50" placeholder="Collez votre texte ici..."></textarea><br><br>
+		
+		<!-- NOUVEAU : Choix du moteur TTS -->
+		<label for="tts_engine">Moteur TTS :</label><br>
+		<select id="tts_engine" name="tts_engine">
+			<option value="gTTS" selected>gTTS (Gratuit, en ligne)</option>
+			<!-- <option value="IBM Watson TTS">IBM Watson TTS (Simulation)</option> -->
+			<!-- Ajouter d'autres options ici -->
+		</select>
+		<br><br>
+		<!-- FIN DU NOUVEAU CHAMP -->
+
+		<!-- Choix de la voix -->
+		<label for="voice">Choix de la voix :</label><br>
+		<select id="voice" name="voice">
+			<option value="Femme (fr)">Femme (par défaut)</option>
+			<option value="Homme (fr)">Homme (simulé)</option>
+		</select>
+		<br><br>
+
+		<input type="submit" value="Soumettre & Écouter">
+	</form>
+
+    <!-- Liste des documents récents -->
+    <h2 style="margin-top: 40px;">_documents récents</h2>
+    {% if recent_docs %}
+        <ul class="recent-docs-list">
+        {% for doc in recent_docs %}
+            <li class="recent-doc-item">
+                <a href="{{ url_for('listen', slug=doc.slug) }}">{{ doc.title }}</a>
+                <span class="doc-stats">(Vues: {{ doc.view_count }}, Lectures: {{ doc.play_count }})</span>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun document partagé pour le moment.</p>
+    {% endif %}
+</div>
+</body>
+</html>

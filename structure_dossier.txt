@@ -1,0 +1,16 @@
+docaudioshare/
+│
+├── app.py
+├── database.py
+├── .env  (facultatif)
+├── requirements.txt (facultatif, pour lister les dépendances)
+│
+├── templates/
+│   ├── index.html
+│   └── listen.html
+│
+└── static/
+    ├── css/
+    │   └── style.css
+    └── audio/
+        └── (ce dossier restera vide initialement)

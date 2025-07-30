@@ -1,0 +1,79 @@
+<!-- templates/interactions.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Interactions - {{ document.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Ajout d'un style spécifique pour cette page -->
+    <style>
+        .interaction-stats {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+        .diagram-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        .diagram-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        /* Style pour les boutons de navigation */
+        .nav-button {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .nav-button:hover {
+            background-color: #0056b3;
+        }
+        .nav-button.secondary {
+            background-color: #6c757d;
+        }
+        .nav-button.secondary:hover {
+            background-color: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Interactions pour "{{ document.title }}"</h1>
+        
+        <!-- Statistiques -->
+        <div class="interaction-stats">
+            <p><strong>Identifiant :</strong> {{ document.slug }}</p>
+            <p><strong>Vues :</strong> {{ document.view_count }}</p>
+            <p><strong>Lectures :</strong> {{ document.play_count }}</p>
+        </div>
+
+        <h2>📈 Diagramme</h2>
+        <div class="diagram-container">
+            <!-- Afficher l'image SVG générée par Kroki -->
+            <img src="{{ url_for('get_interaction_diagram', slug=document.slug) }}" alt="Diagramme des interactions">
+        </div>
+
+        <!-- Boutons de navigation stylisés -->
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="{{ url_for('listen', slug=document.slug) }}" class="nav-button">⬅️ Retour à l'histoire</a>
+            <a href="{{ url_for('index') }}" class="nav-button secondary">🏠 Page d'accueil</a>
+        </div>
+    </div>
+</body>
+</html>

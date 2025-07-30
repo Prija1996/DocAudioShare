@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitrine DocAudioShare</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        .doc-list { list-style: none; padding: 0; }
+        .doc-item { padding: 15px; border-bottom: 1px solid #eee; }
+        .doc-item:last-child { border-bottom: none; }
+        .doc-title { font-weight: bold; color: #007bff; text-decoration: none; }
+        .doc-title:hover { text-decoration: underline; }
+        .doc-meta { font-size: 0.85em; color: #666; }
+        .footer { text-align: center; margin-top: 30px; font-size: 0.8em; color: #999; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎧 Découvrez des Histoires Audio</h1>
+        <p style="text-align: center;">Voici une sélection des derniers documents partagés. Cliquez sur un titre pour l'écouter.</p>
+
+        {% if documents %}
+            <ul class="doc-list">
+            {% for doc in documents %}
+                <li class="doc-item">
+                    <!-- Lien vers la page d'écoute publique -->
+                    <a class="doc-title" href="{{ url_for('listen', slug=doc.slug) }}" target="_blank">{{ doc.title }}</a>
+                    <div class="doc-meta">
+                        <!-- On peut masquer les stats brutes, ou les montrer de manière plus esthétique -->
+                        <!-- Vues: {{ doc.view_count }}, Lectures: {{ doc.play_count }} -->
+                        Partagé récemment
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p style="text-align: center;">Aucun document disponible pour le moment.</p>
+        {% endif %}
+
+        <div class="footer">
+            <p>Propulsé par DocAudioShare. Hébergé gratuitement.</p>
+        </div>
+    </div>
+</body>
+</html>
