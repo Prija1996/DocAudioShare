@@ -433,7 +433,7 @@
         // --- CONFIGURATION ---
         // Remplacez par l'URL réelle de votre API JSON
         // const API_URL = 'http://127.0.0.1:5000/api/documents.json'; // Pour test local
-        const API_URL = 'https://votre-nom-utilisateur.github.io/votre-depot/api/documents.json'; // Pour GitHub Pages
+        const API_URL = './api/documents.json'; // Pour GitHub Pages
 
         // --- ÉLÉMENTS DOM ---
         const docsGrid = document.getElementById('docsGrid');
@@ -460,8 +460,8 @@
         // Ouvrir le modal avec les données d'un document
         function openModal(doc) {
             modalTitle.textContent = doc.title;
-            const audioSrc = `http://127.0.0.1:5000/static/audio/${doc.slug}.mp3`; // Adapter pour GH Pages si besoin
-            // const audioSrc = `https://votre-nom-utilisateur.github.io/votre-depot/static/audio/${doc.slug}.mp3`;
+            // const audioSrc = `http://127.0.0.1:5000/static/audio/${doc.slug}.mp3`; // Adapter pour GH Pages si besoin
+            const audioSrc = `../static/audio/${doc.slug}.mp3`;
             modalAudio.src = audioSrc;
             modalAudio.load();
             modalText.textContent = doc.content || "Texte non disponible.";
